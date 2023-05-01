@@ -3,10 +3,19 @@ config();
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import { Configuration, OpenAIApi } from "openai";
+import rateLimit from "express-rate-limit";
 
 const app: Application = express();
 app.use(express.json());
 app.use(cors());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 12 * 60 * 60 * 1000, // 12 hours
+  max: 5,
+});
+app.use(limiter);
+app.set("trust proxy", 1);
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
